@@ -1,0 +1,60 @@
+.container {
+  margin: calc(4 * var(--spacing));
+  display: flex;
+  flex-direction: row-reverse;
+  height: 40%;
+  .card {
+    width: 30%;
+    height: 100%;
+
+    border-radius: var(--radius);
+    border: 1px solid;
+
+    display: flex;
+    flex-direction: column;
+    .header {
+      padding: var(--spacing);
+      background-color: #3c3d37;
+      color: white;
+
+      display: flex;
+      // flex-direction: column;
+      align-items: center;
+    }
+    .body {
+      // height: 30%;
+      flex-grow: 1;
+      padding: var(--spacing);
+      overflow-y: scroll;
+
+      font-size: 1.5cqh;
+    }
+    .footer {
+      padding: var(--spacing);
+      height: 10%;
+      input {
+        width: 70%;
+        height: 100%;
+
+        box-sizing: border-box;
+        border: 1px solid;
+        border-radius: var(--radius) 0 0 var(--radius);
+      }
+      button {
+        width: 30%;
+        height: 100%;
+        // background-color: #0278ae;
+        background-color: var(--button-primary-color);
+        box-sizing: border-box;
+        border: none;
+        border-radius: 0 var(--radius) var(--radius) 0;
+
+        color: white;
+        &:hover {
+          opacity: 0.8;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

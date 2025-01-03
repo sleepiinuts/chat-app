@@ -1,0 +1,36 @@
+.container {
+  $spacing: var(--spacing);
+  $radius: var(--radius);
+
+  height: 10%;
+  display: flex;
+  box-shadow: calc(-1 * $spacing) $spacing;
+  margin-bottom: calc(2 * $spacing);
+  border: 1px solid;
+  border-radius: $radius;
+
+  .icon {
+    height: 100%;
+    width: 100px;
+    padding: $spacing;
+    img {
+      object-fit: contain;
+      width: 100%;
+      height: calc(100% - 2 * $spacing);
+      border: 2px solid black;
+      box-sizing: border-box;
+      border-radius: $radius;
+
+      background-color: #ab886d;
+    }
+  }
+  .content {
+    .bot-name {
+      margin-top: $spacing;
+      font-weight: 600;
+    }
+    .latest-message {
+      color: #3c3d37;
+    }
+  }
+}
