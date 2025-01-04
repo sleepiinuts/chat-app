@@ -1,8 +1,8 @@
 import { Message } from './message.model';
 
-export interface Bot {
+export interface Thread {
   id: string;
-  name: string;
-  imgSrc: string;
+  botId: string;
+  latestMessage: Message;
   message: Message[];
 }

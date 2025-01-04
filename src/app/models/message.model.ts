@@ -1,6 +1,8 @@
+import { User } from './user.model';
+
 export interface Message {
   id: string;
-  botId: string;
+  user: User;
   timestamp: Date;
-  message: string;
+  text: string;
 }
