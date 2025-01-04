@@ -14,8 +14,8 @@
   }
 
   button {
-    $base-color: #0278ae;
-    $second-color: white;
+    $base-color: var(--button-primary-color);
+    $second-color: var(--button-secondary-color);
 
     height: 50px;
     width: 120px;
