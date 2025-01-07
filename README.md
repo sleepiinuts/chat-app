@@ -57,3 +57,14 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Working with eslint
+
+1. ng add angular-eslint
+2. ng add @ngrx/eslint-plugin (specifically for ngrx)
+   <br>
+   <u>note</u> Detecting on Jan 6,2025: step 2 generated the following error
+   > Could not find the ESLint config at `.eslintrc.json`.
+   > The NgRx ESLint Plugin is installed but not configured.
+   >
+   > Please see https://ngrx.io/guide/eslint-plugin to configure the NgRx ESLint Plugin.
