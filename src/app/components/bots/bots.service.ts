@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { User } from '../../models/user.model';
 import { Bot } from './bot.interface';
 import { EchoBot } from './echo-bot.class';
 import { ReverseBot } from './reverse-bot.class';
@@ -12,7 +13,12 @@ export class BotsService {
     ['2', new ReverseBot()],
   ]);
 
-  reply(botId: string, msg: string): string {
-    return this.bots.get(botId)?.reply(msg) || 'error: bot not found';
+  reply(botId: string, msg: string): { text: string; usr: User | undefined } {
+    const bot = this.bots.get(botId);
+    if (bot === undefined) {
+      return { text: 'error:bot not found', usr: undefined };
+    }
+
+    return { text: bot.reply(msg), usr: bot.user };
   }
 }
