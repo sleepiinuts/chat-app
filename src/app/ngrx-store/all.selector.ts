@@ -17,3 +17,15 @@ export const selectBotId = createSelector(
   selectChatWindowState,
   (state) => state.botId
 );
+
+// chatWindow:promptMessage
+export const selectPrompt = createSelector(
+  selectChatWindowState,
+  (state) => state.promptMessage
+);
+
+// chatWindow:responseMessage
+export const selectResponse = createSelector(
+  selectChatWindowState,
+  (state) => state.responseMessage
+);

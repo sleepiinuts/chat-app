@@ -6,5 +6,7 @@ export const ChatWindowActions = createActionGroup({
   events: {
     Chat: props<{ message: Message }>(),
     'Set Messages': props<{ messages: Message[] }>(),
+    'Set Prompt Message': props<{ message: Message }>(),
+    'Set Response Message': props<{ message: Message }>(),
   },
 });
