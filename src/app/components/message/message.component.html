@@ -1,11 +1,47 @@
-<div class="container">
+<div
+  class="container"
+  [ngClass]="{ user: message !== undefined && !message.user?.isBot }"
+>
+  <!-- <div class="text">
+    <ng-container
+      *ngTemplateOutlet="message ? actual : textplaceholder"
+    ></ng-container>
+  </div>
+  <div class="avatar">
+    <img src="echo_bot.webp" alt="echo bot avatar" />
+  </div> -->
+  <ng-container
+    *ngTemplateOutlet="
+      message === undefined || message.user?.isBot ? bot : user
+    "
+  ></ng-container>
+</div>
+
+<ng-template #textplaceholder>
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem, soluta
+  quibusdam. Temporibus facilis ipsa animi, quo est ea minima natus neque vero,
+  expedita placeat exercitationem quod debitis maxime consectetur molestiae?
+</ng-template>
+
+<ng-template #actual>
+  {{ message.text }}
+</ng-template>
+
+<ng-template #bot>
   <div class="text">
-    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Cum nisi eligendi
-    amet ipsam velit est animi deleniti pariatur accusamus quasi. Perferendis
-    aspernatur dolore dolorum, consequatur repudiandae iusto commodi voluptate
-    magnam!
+    <ng-container
+      *ngTemplateOutlet="message ? actual : textplaceholder"
+    ></ng-container>
   </div>
   <div class="avatar">
     <img src="echo_bot.webp" alt="echo bot avatar" />
   </div>
-</div>
+</ng-template>
+
+<ng-template #user>
+  <div class="text">
+    <ng-container
+      *ngTemplateOutlet="message ? actual : textplaceholder"
+    ></ng-container>
+  </div>
+</ng-template>

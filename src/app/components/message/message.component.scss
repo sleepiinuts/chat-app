@@ -6,8 +6,17 @@
 
   width: 100%;
 
-  &.bot {
+  margin-bottom: var(--spacing);
+
+  &.user {
+    // override flex direction for user input
     flex-direction: row-reverse;
+
+    // override textbox for user input
+    .text {
+      background-color: #a1d6b2;
+      border-radius: $radius 0 0 $radius;
+    }
   }
 
   .text {
