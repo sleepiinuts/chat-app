@@ -9,8 +9,13 @@
   border: 1px solid;
   border-radius: $radius;
 
-  :hover {
+  &:hover {
     cursor: pointer;
+    background-color: #fffaec;
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 
   .icon {
