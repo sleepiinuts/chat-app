@@ -1,4 +1,12 @@
-import { Component, effect, Signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  effect,
+  Injector,
+  Signal,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -20,7 +28,7 @@ import { MessageComponent } from '../message/message.component';
   templateUrl: './chat-window.component.html',
   styleUrl: './chat-window.component.scss',
 })
-export class ChatWindowComponent {
+export class ChatWindowComponent implements AfterViewInit {
   textForm = new FormGroup({
     message: new FormControl('', Validators.required),
   });
@@ -28,14 +36,25 @@ export class ChatWindowComponent {
   #promptMessage: Signal<Message | undefined>;
   #responseMessage: Signal<Message | undefined>;
 
-  constructor(private store: Store) {
+  @ViewChild('vcr', { read: ViewContainerRef }) _msgVcr!: ViewContainerRef;
+
+  constructor(private store: Store, private injector: Injector) {
     this.#promptMessage = this.store.selectSignal(selectPrompt);
     this.#responseMessage = this.store.selectSignal(selectResponse);
+  }
 
-    effect(() => {
-      console.log(`promp signal: ${this.#promptMessage()?.text}`);
-      console.log(`response signal: ${this.#responseMessage()?.text}`);
-    });
+  ngAfterViewInit(): void {
+    effect(
+      () => {
+        // console.log(`promp signal: ${this.#promptMessage()?.text}`);
+        // console.log(`response signal: ${this.#responseMessage()?.text}`);
+        this.displayMessage(this.#promptMessage());
+        this.displayMessage(this.#responseMessage());
+      },
+      { injector: this.injector }
+    );
+    // this._msgVcr.createComponent(MessageComponent);
+    // this._msgVcr.createComponent(MessageComponent);
   }
 
   onSubmit() {
@@ -46,9 +65,18 @@ export class ChatWindowComponent {
       this.textForm.value.message || ''
     );
 
-    // console.log(`message: ${msg.text}`);
-    // console.log(`valid: ${this.textForm.valid}`);
-
     this.store.dispatch(ChatWindowActions.chat({ message: msg }));
+
+    // reset form
+    this.textForm.reset();
+  }
+
+  displayMessage(msg: Message | undefined) {
+    if (msg === undefined) return;
+
+    const ref = this._msgVcr.createComponent(MessageComponent);
+
+    // doesnt work with input though; must use @Input instead
+    ref.setInput('message', msg);
   }
 }
