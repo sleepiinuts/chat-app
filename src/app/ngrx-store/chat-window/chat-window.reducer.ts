@@ -8,14 +8,12 @@ export interface State {
   messages: Message[];
   promptMessage: Message | undefined;
   responseMessage: Message | undefined;
-  botId: string;
 }
 
 export const initialState: State = {
   messages: [],
   promptMessage: undefined,
   responseMessage: undefined,
-  botId: '1',
 };
 
 export const reducer = createReducer(
