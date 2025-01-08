@@ -15,7 +15,7 @@ export const initialState: State = {
   messages: [],
   promptMessage: undefined,
   responseMessage: undefined,
-  botId: '2',
+  botId: '1',
 };
 
 export const reducer = createReducer(
