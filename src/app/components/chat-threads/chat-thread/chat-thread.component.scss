@@ -9,6 +9,10 @@
   border: 1px solid;
   border-radius: $radius;
 
+  :hover {
+    cursor: pointer;
+  }
+
   .icon {
     height: 100%;
     width: 100px;

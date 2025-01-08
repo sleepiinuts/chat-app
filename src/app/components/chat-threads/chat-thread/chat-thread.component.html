@@ -1,9 +1,10 @@
 <div class="container">
   <div class="icon">
-    <img src="echo_bot.webp" alt="echo bot image" />
+    <!-- <img src="echo_bot.webp" alt="echo bot image" /> -->
+    <img [src]="thread().bot.imgSrc" alt="echo bot image" />
   </div>
   <div class="content">
-    <div class="bot-name">Echo Bot</div>
+    <div class="bot-name">{{ thread().bot.name }}</div>
     <p class="latest-message">something</p>
   </div>
 </div>
