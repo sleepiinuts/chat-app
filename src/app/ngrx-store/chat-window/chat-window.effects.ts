@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { concatLatestFrom } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
 import { catchError, EMPTY, exhaustMap, map, of } from 'rxjs';
-import { selectBotId, selectChatWindowState } from '../all.selector';
+import { selectChatWindowState, selectCurrentThreadId } from '../all.selector';
 import { ChatWindowActions } from './chat-window.actions';
 import { ChatWindowService } from './chat-window.service';
 
@@ -18,7 +18,7 @@ export class ChatWindowEffects {
   chat$ = createEffect(() => {
     return this.action$.pipe(
       ofType(ChatWindowActions.chat),
-      concatLatestFrom(() => this.store.select(selectBotId)),
+      concatLatestFrom(() => this.store.select(selectCurrentThreadId)),
       exhaustMap(([props, botId]) => {
         return this.chatWindowServ.chat(props.message, botId).pipe(
           map((messages) =>
