@@ -21,4 +21,8 @@ export class BotsService {
 
     return { text: bot.reply(msg), usr: bot.user };
   }
+
+  getBot(): User[] {
+    return Array.from(this.bots.values()).map((bot) => bot.user);
+  }
 }
