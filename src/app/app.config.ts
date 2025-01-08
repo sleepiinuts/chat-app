@@ -14,6 +14,10 @@ import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { routes } from './app.routes';
+import {
+  chatThreadsFeatureKey,
+  reducer as chatThreadsReducer,
+} from './ngrx-store/chat-threads/chat-threads.reducer';
 import { ChatWindowEffects } from './ngrx-store/chat-window/chat-window.effects';
 import {
   chatWindowFeatureKey,
@@ -29,6 +33,7 @@ export const appConfig: ApplicationConfig = {
     provideStore(),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     provideState({ name: chatWindowFeatureKey, reducer: chatWindowReducer }),
+    provideState({ name: chatThreadsFeatureKey, reducer: chatThreadsReducer }),
     provideEffects([ChatWindowEffects]),
   ],
 };
