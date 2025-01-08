@@ -1,4 +1,8 @@
 <div class="container">
-  <app-chat-thread></app-chat-thread>
-  <app-chat-thread></app-chat-thread>
+  <!-- <app-chat-thread></app-chat-thread>
+  <app-chat-thread></app-chat-thread> -->
+
+  @for(t of threads | keyvalue;track t.key){
+  <app-chat-thread [thread]="t.value"></app-chat-thread>
+  }
 </div>
