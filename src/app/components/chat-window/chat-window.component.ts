@@ -1,6 +1,8 @@
+import { TitleCasePipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
+  computed,
   effect,
   Injector,
   Signal,
@@ -18,13 +20,23 @@ import { Store } from '@ngrx/store';
 import { v4 as uuidv4 } from 'uuid';
 import { Message } from '../../models/message.model';
 import { User } from '../../models/user.model';
-import { selectPrompt, selectResponse } from '../../ngrx-store/all.selector';
+import {
+  selectCurrentThreadId,
+  selectPrompt,
+  selectResponse,
+} from '../../ngrx-store/all.selector';
 import { ChatWindowActions } from '../../ngrx-store/chat-window/chat-window.actions';
+import { BotsService } from '../bots/bots.service';
 import { MessageComponent } from '../message/message.component';
 
 @Component({
   selector: 'app-chat-window',
-  imports: [MatIconModule, MessageComponent, ReactiveFormsModule],
+  imports: [
+    MatIconModule,
+    MessageComponent,
+    ReactiveFormsModule,
+    TitleCasePipe,
+  ],
   templateUrl: './chat-window.component.html',
   styleUrl: './chat-window.component.scss',
 })
@@ -33,12 +45,22 @@ export class ChatWindowComponent implements AfterViewInit {
     message: new FormControl('', Validators.required),
   });
 
+  // signals
   #promptMessage: Signal<Message | undefined>;
   #responseMessage: Signal<Message | undefined>;
 
+  botName: Signal<string> = computed(() => {
+    const botId = this.store.selectSignal(selectCurrentThreadId)();
+    return this.getBotName(botId);
+  });
+
   @ViewChild('vcr', { read: ViewContainerRef }) _msgVcr!: ViewContainerRef;
 
-  constructor(private store: Store, private injector: Injector) {
+  constructor(
+    private store: Store,
+    private injector: Injector,
+    private botServ: BotsService
+  ) {
     this.#promptMessage = this.store.selectSignal(selectPrompt);
     this.#responseMessage = this.store.selectSignal(selectResponse);
   }
@@ -78,5 +100,9 @@ export class ChatWindowComponent implements AfterViewInit {
 
     // doesnt work with input though; must use @Input instead
     ref.setInput('message', msg);
+  }
+
+  getBotName(botId: string): string {
+    return this.botServ.getBot(botId)?.user.name || 'bot not found';
   }
 }
