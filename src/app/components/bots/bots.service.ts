@@ -22,7 +22,11 @@ export class BotsService {
     return { text: bot.reply(msg), usr: bot.user };
   }
 
-  getBot(): User[] {
+  getBots(): User[] {
     return Array.from(this.bots.values()).map((bot) => bot.user);
+  }
+
+  getBot(botId: string): Bot | undefined {
+    return this.bots.get(botId);
   }
 }
