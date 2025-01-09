@@ -1,4 +1,6 @@
-import { createReducer, on } from '@ngrx/store';
+import { Injectable } from '@angular/core';
+import { Action, ActionReducer, createReducer, on } from '@ngrx/store';
+import { BotsService } from '../../components/bots/bots.service';
 import { ChatThreadsActions } from './chat-threads.actions';
 
 export const chatThreadsFeatureKey = 'chatThreads';
@@ -7,17 +9,25 @@ export interface State {
   currentThread: string;
 }
 
-export const initialState: State = {
-  currentThread: '',
-};
+@Injectable({
+  providedIn: 'root',
+})
+export class ChatThreadsReducer {
+  initialState: State;
+  constructor(private botsServ: BotsService) {
+    this.initialState = { currentThread: '' };
+  }
 
-export const reducer = createReducer(
-  initialState,
-  on(
-    ChatThreadsActions.setCurrentThread,
-    (state, props): State => ({
-      ...state,
-      currentThread: props.currentThread,
-    })
-  )
-);
+  createReducer(): ActionReducer<State, Action> {
+    return createReducer(
+      this.initialState,
+      on(
+        ChatThreadsActions.setCurrentThread,
+        (state, props): State => ({
+          ...state,
+          currentThread: props.currentThread,
+        })
+      )
+    );
+  }
+}
