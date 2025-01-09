@@ -3,7 +3,8 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { concatLatestFrom } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
 import { catchError, EMPTY, exhaustMap, map, of } from 'rxjs';
-import { selectChatWindowState, selectCurrentThreadId } from '../all.selector';
+import { selectCurrentThreadId, selectLatestMsg } from '../all.selector';
+import { ChatThreadsActions } from '../chat-threads/chat-threads.actions';
 import { ChatWindowActions } from './chat-window.actions';
 import { ChatWindowService } from './chat-window.service';
 
@@ -22,7 +23,10 @@ export class ChatWindowEffects {
       exhaustMap(([props, botId]) => {
         return this.chatWindowServ.chat(props.message, botId).pipe(
           map((messages) =>
-            ChatWindowActions.setMessages({ messages: messages })
+            ChatThreadsActions.newMessages({
+              threadId: botId,
+              messages: messages,
+            })
           ),
           catchError(() => EMPTY)
         );
@@ -33,7 +37,7 @@ export class ChatWindowEffects {
   // chained from ChatWindowActions.setMessages
   setPromptMessage$ = createEffect(() => {
     return this.action$.pipe(
-      ofType(ChatWindowActions.setMessages),
+      ofType(ChatThreadsActions.newMessages),
       exhaustMap((props) => {
         const n = props.messages.length;
 
@@ -50,13 +54,14 @@ export class ChatWindowEffects {
   setResponseMessage$ = createEffect(() => {
     return this.action$.pipe(
       ofType(ChatWindowActions.setPromptMessage),
-      concatLatestFrom(() => this.store.select(selectChatWindowState)),
-      exhaustMap(([, state]) => {
-        const n = state.messages.length;
+      concatLatestFrom(() => this.store.select(selectLatestMsg)),
+      exhaustMap(([, message]) => {
+        // TODO: error handling
+        if (message === undefined) return EMPTY;
 
         return of(
           ChatWindowActions.setResponseMessage({
-            message: state.messages[n - 1],
+            message: message,
           })
         );
       })

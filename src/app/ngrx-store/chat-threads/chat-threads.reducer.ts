@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, ActionReducer, createReducer, on } from '@ngrx/store';
+import { cloneDeep } from 'lodash';
 import { BotsService } from '../../components/bots/bots.service';
 import { Thread } from '../../models/thread.model';
 import { ChatThreadsActions } from './chat-threads.actions';
@@ -42,7 +43,25 @@ export class ChatThreadsReducer {
           ...state,
           currentThread: props.currentThread,
         })
-      )
+      ),
+      on(ChatThreadsActions.newMessages, (state, props): State => {
+        // clone state -> newState
+        const newState = cloneDeep(state);
+
+        // set latest message
+        const thread = newState.threads[props.threadId];
+
+        // props.messages container: prompt & response message in order
+        thread.latestMessage = props.messages[1];
+
+        // handle adding to empty thread
+        thread.messages = thread.messages
+          ? [...thread.messages, ...props.messages]
+          : props.messages;
+
+        // append messages
+        return newState;
+      })
     );
   }
 }
