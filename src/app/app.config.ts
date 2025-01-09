@@ -1,5 +1,6 @@
 import {
   ApplicationConfig,
+  InjectionToken,
   isDevMode,
   provideZoneChangeDetection,
 } from '@angular/core';
@@ -11,18 +12,29 @@ import {
 } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideEffects } from '@ngrx/effects';
-import { provideState, provideStore } from '@ngrx/store';
+import { Action, ActionReducer, provideState, provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { routes } from './app.routes';
 import {
   chatThreadsFeatureKey,
-  reducer as chatThreadsReducer,
+  ChatThreadsReducer,
+  State as ChatThreadsState,
 } from './ngrx-store/chat-threads/chat-threads.reducer';
 import { ChatWindowEffects } from './ngrx-store/chat-window/chat-window.effects';
 import {
   chatWindowFeatureKey,
   reducer as chatWindowReducer,
 } from './ngrx-store/chat-window/chat-window.reducer';
+
+export const CHAT_THREADS_REDUCER_TOKEN = new InjectionToken<
+  ActionReducer<ChatThreadsState, Action>
+>('token for chat threads reducer');
+
+export const chatThreadsReducerFactory = (
+  ctr: ChatThreadsReducer
+): ActionReducer<ChatThreadsState, Action> => {
+  return ctr.createReducer();
+};
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,7 +45,12 @@ export const appConfig: ApplicationConfig = {
     provideStore(),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     provideState({ name: chatWindowFeatureKey, reducer: chatWindowReducer }),
-    provideState({ name: chatThreadsFeatureKey, reducer: chatThreadsReducer }),
+    provideState(chatThreadsFeatureKey, CHAT_THREADS_REDUCER_TOKEN),
     provideEffects([ChatWindowEffects]),
+    {
+      provide: CHAT_THREADS_REDUCER_TOKEN,
+      deps: [ChatThreadsReducer],
+      useFactory: chatThreadsReducerFactory,
+    },
   ],
 };
