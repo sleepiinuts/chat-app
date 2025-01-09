@@ -33,7 +33,14 @@ export const selectChatThreadState = createFeatureSelector<ChatThreadsState>(
   chatThreadsFeatureKey
 );
 
+// chatThreads:currentThread
 export const selectCurrentThreadId = createSelector(
   selectChatThreadState,
   (state) => state.currentThread
+);
+
+// chatThreads:latest message from currentThread
+export const selectLatestMsg = createSelector(
+  selectChatThreadState,
+  (state) => state.threads[state.currentThread].latestMessage
 );
