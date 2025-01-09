@@ -34,7 +34,10 @@
     ></ng-container>
   </div>
   <div class="avatar">
-    <img src="echo_bot.webp" alt="echo bot avatar" />
+    <img
+      [src]="!message ? 'echo_bot.webp' : message.user?.imgSrc"
+      alt="echo bot avatar"
+    />
   </div>
 </ng-template>
 
