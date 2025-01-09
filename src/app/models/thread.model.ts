@@ -7,6 +7,6 @@ export class Thread {
   constructor(
     public readonly bot: User,
     public latestMessage: Message | undefined,
-    public message: Message[] | undefined
+    public messages: Message[] | undefined
   ) {}
 }
