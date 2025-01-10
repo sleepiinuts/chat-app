@@ -14,10 +14,10 @@ export class ChatThreadComponent {
 
   constructor(private store: Store) {}
 
-  setCurrentThread() {
+  selectThread() {
     this.store.dispatch(
-      ChatThreadsActions.setCurrentThread({
-        currentThread: this.thread().bot.id,
+      ChatThreadsActions.switchThread({
+        threadId: this.thread().bot.id,
       })
     );
   }
