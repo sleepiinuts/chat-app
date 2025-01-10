@@ -44,3 +44,9 @@ export const selectLatestMsg = createSelector(
   selectChatThreadState,
   (state) => state.threads[state.currentThread].latestMessage
 );
+
+// chatThreads: all message in currentThread
+export const selectThreadMessages = createSelector(
+  selectChatThreadState,
+  (state) => state.threads[state.currentThread].messages
+);
