@@ -44,20 +44,18 @@ export class ChatThreadsReducer {
           currentThread: props.currentThread,
         })
       ),
-      on(ChatThreadsActions.newMessages, (state, props): State => {
+      on(ChatThreadsActions.newMessage, (state, props): State => {
         // clone state -> newState
         const newState = cloneDeep(state);
 
         // set latest message
         const thread = newState.threads[props.threadId];
-
-        // props.messages container: prompt & response message in order
-        thread.latestMessage = props.messages[1];
+        thread.latestMessage = props.message;
 
         // handle adding to empty thread
         thread.messages = thread.messages
-          ? [...thread.messages, ...props.messages]
-          : props.messages;
+          ? [...thread.messages, props.message]
+          : [props.message];
 
         // append messages
         return newState;

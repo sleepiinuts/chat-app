@@ -5,7 +5,7 @@ export const ChatThreadsActions = createActionGroup({
   source: 'ChatThreads',
   events: {
     'Set CurrentThread': props<{ currentThread: string }>(),
-    'New Messages': props<{ threadId: string; messages: Message[] }>(),
+    'New Message': props<{ threadId: string; message: Message }>(),
     'Switch Thread': props<{ threadId: string }>(),
   },
 });
