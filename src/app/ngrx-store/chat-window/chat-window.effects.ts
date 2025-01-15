@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { concatLatestFrom } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
-import { catchError, EMPTY, exhaustMap, map, of } from 'rxjs';
-import { selectCurrentThreadId, selectLatestMsg } from '../all.selector';
+import { catchError, EMPTY, exhaustMap, of } from 'rxjs';
+import { selectCurrentThreadId } from '../all.selector';
 import { ChatThreadsActions } from '../chat-threads/chat-threads.actions';
 import { ChatWindowActions } from './chat-window.actions';
 import { ChatWindowService } from './chat-window.service';
@@ -16,55 +16,85 @@ export class ChatWindowEffects {
     private store: Store
   ) {}
 
-  chat$ = createEffect(() => {
+  prompt$ = createEffect(() => {
     return this.action$.pipe(
       ofType(ChatWindowActions.chat),
       concatLatestFrom(() => this.store.select(selectCurrentThreadId)),
-      exhaustMap(([props, botId]) => {
-        return this.chatWindowServ.chat(props.message, botId).pipe(
-          map((messages) =>
-            ChatThreadsActions.newMessages({
-              threadId: botId,
-              messages: messages,
-            })
-          ),
-          catchError(() => EMPTY)
+      exhaustMap(([props, botId]) =>
+        of(
+          ChatWindowActions.prompt({
+            threadId: botId,
+            prompt: props.message,
+          })
+        )
+      )
+    );
+  });
+
+  // chained from ChatWindowActions.chat
+  setPromptMessage$ = createEffect(() => {
+    return this.action$.pipe(
+      ofType(ChatWindowActions.prompt),
+      exhaustMap((props) => {
+        return of(
+          ChatWindowActions.setPromptMessage({
+            message: props.prompt,
+          })
         );
       })
     );
   });
 
-  // chained from ChatWindowActions.setMessages
-  setPromptMessage$ = createEffect(() => {
+  addPromptToThread$ = createEffect(() => {
     return this.action$.pipe(
-      ofType(ChatThreadsActions.newMessages),
+      ofType(ChatWindowActions.prompt),
       exhaustMap((props) => {
-        const n = props.messages.length;
-
         return of(
-          ChatWindowActions.setPromptMessage({
-            message: props.messages[n - 2],
+          ChatThreadsActions.newMessage({
+            threadId: props.threadId,
+            message: props.prompt,
           })
         );
       })
+    );
+  });
+
+  response$ = createEffect(() => {
+    return this.action$.pipe(
+      ofType(ChatWindowActions.chat),
+      concatLatestFrom(() => this.store.select(selectCurrentThreadId)),
+      exhaustMap(([props, botId]) =>
+        this.chatWindowServ.chat(props.message, botId).pipe(
+          exhaustMap((resp) =>
+            of(ChatWindowActions.response({ response: resp, threadId: botId }))
+          ),
+          catchError(() => EMPTY) // TODO: error handling?
+        )
+      )
     );
   });
 
   // chained from setPromptMessaage$
   setResponseMessage$ = createEffect(() => {
     return this.action$.pipe(
-      ofType(ChatWindowActions.setPromptMessage),
-      concatLatestFrom(() => this.store.select(selectLatestMsg)),
-      exhaustMap(([, message]) => {
-        // TODO: error handling
-        if (message === undefined) return EMPTY;
+      ofType(ChatWindowActions.response),
+      exhaustMap((props) =>
+        of(ChatWindowActions.setResponseMessage({ message: props.response }))
+      )
+    );
+  });
 
-        return of(
-          ChatWindowActions.setResponseMessage({
-            message: message,
+  addResponseToThread$ = createEffect(() => {
+    return this.action$.pipe(
+      ofType(ChatWindowActions.response),
+      exhaustMap((props) =>
+        of(
+          ChatThreadsActions.newMessage({
+            threadId: props.threadId,
+            message: props.response,
           })
-        );
-      })
+        )
+      )
     );
   });
 }
