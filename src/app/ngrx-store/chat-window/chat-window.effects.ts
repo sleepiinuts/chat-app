@@ -16,6 +16,7 @@ export class ChatWindowEffects {
     private store: Store
   ) {}
 
+  // chained from ChatWindowActions.chat
   prompt$ = createEffect(() => {
     return this.action$.pipe(
       ofType(ChatWindowActions.chat),
@@ -31,7 +32,7 @@ export class ChatWindowEffects {
     );
   });
 
-  // chained from ChatWindowActions.chat
+  // chained from ChatWindowActions.prompt
   setPromptMessage$ = createEffect(() => {
     return this.action$.pipe(
       ofType(ChatWindowActions.prompt),
@@ -45,6 +46,7 @@ export class ChatWindowEffects {
     );
   });
 
+  // chained from ChatWindowActions.prompt
   addPromptToThread$ = createEffect(() => {
     return this.action$.pipe(
       ofType(ChatWindowActions.prompt),
@@ -59,6 +61,7 @@ export class ChatWindowEffects {
     );
   });
 
+  // chained from ChatWindowActions.chat
   response$ = createEffect(() => {
     return this.action$.pipe(
       ofType(ChatWindowActions.chat),
@@ -75,7 +78,7 @@ export class ChatWindowEffects {
     );
   });
 
-  // chained from setPromptMessaage$
+  // chained from ChatWindowActions.response
   setResponseMessage$ = createEffect(() => {
     return this.action$.pipe(
       ofType(ChatWindowActions.response),
@@ -85,6 +88,7 @@ export class ChatWindowEffects {
     );
   });
 
+  // chained from ChatWindowActions.response
   addResponseToThread$ = createEffect(() => {
     return this.action$.pipe(
       ofType(ChatWindowActions.response),
