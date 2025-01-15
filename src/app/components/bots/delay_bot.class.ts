@@ -7,7 +7,7 @@ export class DelayBot implements Bot {
   reply(msg: string): Observable<string> {
     return new Observable<string>((observer) => {
       setTimeout(() => {
-        observer.next(msg);
+        observer.next(`reply: ${msg}`);
         observer.complete();
       }, 5000);
     });
