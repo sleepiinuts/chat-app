@@ -4,7 +4,6 @@ import {
   Component,
   computed,
   DestroyRef,
-  effect,
   Injector,
   Signal,
   ViewChild,
@@ -26,8 +25,6 @@ import { Message } from '../../models/message.model';
 import { User } from '../../models/user.model';
 import {
   selectCurrentThreadId,
-  selectPrompt,
-  selectResponse,
   selectThreadMessages,
 } from '../../ngrx-store/all.selector';
 import { ChatThreadsActions } from '../../ngrx-store/chat-threads/chat-threads.actions';
@@ -51,10 +48,6 @@ export class ChatWindowComponent implements AfterViewInit {
     message: new FormControl('', Validators.required),
   });
 
-  // signals
-  #promptMessage: Signal<Message | undefined>;
-  #responseMessage: Signal<Message | undefined>;
-
   botName: Signal<string> = computed(() => {
     const botId = this.store.selectSignal(selectCurrentThreadId)();
     return this.getBotName(botId);
@@ -70,9 +63,6 @@ export class ChatWindowComponent implements AfterViewInit {
     private action$: Actions,
     private destroyRef: DestroyRef
   ) {
-    this.#promptMessage = this.store.selectSignal(selectPrompt);
-    this.#responseMessage = this.store.selectSignal(selectResponse);
-
     this.action$
       .pipe(ofType(ChatThreadsActions.setCurrentThread))
       .subscribe(() => {
@@ -81,15 +71,27 @@ export class ChatWindowComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    effect(
-      () => {
-        this.displayMessage(this.#promptMessage());
-        this.displayMessage(this.#responseMessage());
+    // effect: this runs on every change; causing both signal to runs
+    // if only one of the two signals has change; the other signal will give old value -- which is not intended
+    // effect(
+    //   () => {
+    //     this.displayMessage(this.#promptMessage());
+    //     this.displayMessage(this.#responseMessage());
 
-        // this.onThreadChange(this.#currentThread());
-      },
-      { injector: this.injector }
-    );
+    //     // this.onThreadChange(this.#currentThread());
+    //   },
+    //   { injector: this.injector }
+    // );
+
+    // listen to prompt message
+    this.action$
+      .pipe(ofType(ChatWindowActions.setPromptMessage))
+      .subscribe((props) => this.displayMessage(props.message));
+
+    // listen to response message
+    this.action$
+      .pipe(ofType(ChatWindowActions.setResponseMessage))
+      .subscribe((props) => this.displayMessage(props.message));
   }
 
   onSubmit() {
