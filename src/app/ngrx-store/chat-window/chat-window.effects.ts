@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { concatLatestFrom } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
-import { catchError, EMPTY, exhaustMap, of } from 'rxjs';
+import { catchError, concatMap, EMPTY, exhaustMap, map, of } from 'rxjs';
 import { selectCurrentThreadId } from '../all.selector';
 import { ChatThreadsActions } from '../chat-threads/chat-threads.actions';
 import { ChatWindowActions } from './chat-window.actions';
@@ -63,10 +63,11 @@ export class ChatWindowEffects {
     return this.action$.pipe(
       ofType(ChatWindowActions.chat),
       concatLatestFrom(() => this.store.select(selectCurrentThreadId)),
-      exhaustMap(([props, botId]) =>
+      concatMap(([props, botId]) =>
         this.chatWindowServ.chat(props.message, botId).pipe(
-          exhaustMap((resp) =>
-            of(ChatWindowActions.response({ response: resp, threadId: botId }))
+          // tap((resp) => console.log(`resp: ${resp.text}`)),
+          map((resp) =>
+            ChatWindowActions.response({ response: resp, threadId: botId })
           ),
           catchError(() => EMPTY) // TODO: error handling?
         )
