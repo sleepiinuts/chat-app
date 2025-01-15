@@ -1,10 +1,11 @@
+import { Observable, of } from 'rxjs';
 import { User } from '../../models/user.model';
 import { Bot } from './bot.interface';
 
 export class ReverseBot implements Bot {
   user: User;
-  reply(msg: string): string {
-    return msg.split('').reverse().join('');
+  reply(msg: string): Observable<string> {
+    return of(msg.split('').reverse().join(''));
   }
 
   constructor() {

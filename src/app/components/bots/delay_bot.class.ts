@@ -1,10 +1,16 @@
+import { Observable } from 'rxjs';
 import { User } from '../../models/user.model';
 import { Bot } from './bot.interface';
 
 export class DelayBot implements Bot {
   user: User;
-  reply(msg: string): string {
-    return msg;
+  reply(msg: string): Observable<string> {
+    return new Observable<string>((observer) => {
+      setTimeout(() => {
+        observer.next(msg);
+        observer.complete();
+      }, 5000);
+    });
   }
 
   constructor() {
