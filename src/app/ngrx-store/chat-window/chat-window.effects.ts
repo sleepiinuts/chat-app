@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { concatLatestFrom } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
-import { catchError, concatMap, EMPTY, exhaustMap, map, of } from 'rxjs';
+import { catchError, EMPTY, exhaustMap, map, mergeMap, of } from 'rxjs';
 import { selectCurrentThreadId } from '../all.selector';
 import { ChatThreadsActions } from '../chat-threads/chat-threads.actions';
 import { ChatWindowActions } from './chat-window.actions';
@@ -62,11 +62,13 @@ export class ChatWindowEffects {
   });
 
   // chained from ChatWindowActions.chat
+  // mergeMap: merge source value; each source value starts on its own
+  // concatMap: combine source value orderly;each source value starts after completion of another
   response$ = createEffect(() => {
     return this.action$.pipe(
       ofType(ChatWindowActions.chat),
       concatLatestFrom(() => this.store.select(selectCurrentThreadId)),
-      concatMap(([props, botId]) =>
+      mergeMap(([props, botId]) =>
         this.chatWindowServ.chat(props.message, botId).pipe(
           // tap((resp) => console.log(`resp: ${resp.text}`)),
           map((resp) =>
