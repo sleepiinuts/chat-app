@@ -50,3 +50,9 @@ export const selectThreadMessages = createSelector(
   selectChatThreadState,
   (state) => state.threads[state.currentThread].messages
 );
+
+export const selectLatestMsgFromThread = (threadId: string) =>
+  createSelector(
+    selectChatThreadState,
+    (state) => state.threads[threadId].latestMessage
+  );

@@ -1,6 +1,7 @@
+import { Observable } from 'rxjs';
 import { User } from '../../models/user.model';
 
 export interface Bot {
   readonly user: User;
-  reply: (msg: string) => string;
+  reply: (msg: string) => Observable<string>;
 }
