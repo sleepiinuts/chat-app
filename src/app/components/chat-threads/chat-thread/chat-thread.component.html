@@ -5,6 +5,6 @@
   </div>
   <div class="content">
     <div class="bot-name">{{ thread().bot.name }}</div>
-    <p class="latest-message">something</p>
+    <p class="latest-message">{{ latestMsg()?.text || "..." }}</p>
   </div>
 </div>
