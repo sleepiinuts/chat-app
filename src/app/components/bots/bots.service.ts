@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { User } from '../../models/user.model';
 import { Bot } from './bot.interface';
+import { DelayBot } from './delay_bot.class';
 import { EchoBot } from './echo-bot.class';
 import { ReverseBot } from './reverse-bot.class';
 
@@ -12,6 +13,7 @@ export class BotsService {
   private bots: Map<string, Bot> = new Map<string, Bot>([
     ['1', new EchoBot()],
     ['2', new ReverseBot()],
+    ['3', new DelayBot()],
   ]);
 
   reply(
