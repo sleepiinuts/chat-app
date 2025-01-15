@@ -10,14 +10,13 @@ import { Message } from '../../models/message.model';
 export class ChatWindowService {
   constructor(private botServ: BotsService) {}
 
-  chat(msg: Message, botId: string): Observable<Message[]> {
+  chat(msg: Message, botId: string): Observable<Message> {
     // get bot response
     const { text, usr } = this.botServ.reply(botId, msg.text);
 
     return text.pipe(
       map((txt) => {
-        const response = new Message(uuidv4(), usr, new Date(), txt);
-        return [msg, response];
+        return new Message(uuidv4(), usr, new Date(), txt);
       })
     );
   }
