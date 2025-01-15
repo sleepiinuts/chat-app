@@ -18,8 +18,9 @@ import {
 } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { Actions, ofType } from '@ngrx/effects';
+import { concatLatestFrom } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
-import { take } from 'rxjs';
+import { filter, take } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Message } from '../../models/message.model';
 import { User } from '../../models/user.model';
@@ -90,8 +91,12 @@ export class ChatWindowComponent implements AfterViewInit {
 
     // listen to response message
     this.action$
-      .pipe(ofType(ChatWindowActions.setResponseMessage))
-      .subscribe((props) => this.displayMessage(props.message));
+      .pipe(
+        ofType(ChatWindowActions.setResponseMessage),
+        concatLatestFrom(() => this.store.select(selectCurrentThreadId)),
+        filter(([props, threadId]) => props.message.user?.id === threadId)
+      )
+      .subscribe(([props]) => this.displayMessage(props.message));
   }
 
   onSubmit() {
