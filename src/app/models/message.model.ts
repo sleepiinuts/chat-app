@@ -5,6 +5,7 @@ export class Message {
     public readonly id: string,
     public user: User | undefined,
     public timestamp: Date,
-    public text: string
+    public text: string,
+    public isRead = true
   ) {}
 }
