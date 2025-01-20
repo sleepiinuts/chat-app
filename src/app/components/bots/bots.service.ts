@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { concatLatestFrom } from '@ngrx/operators';
+import { Store } from '@ngrx/store';
+import { mergeMap, Observable, of } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
+import { Message } from '../../models/message.model';
 import { User } from '../../models/user.model';
+import { selectCurrentThreadId } from '../../ngrx-store/all.selector';
 import { Bot } from './bot.interface';
 import { DelayBot } from './delay_bot.class';
 import { EchoBot } from './echo-bot.class';
@@ -16,16 +21,27 @@ export class BotsService {
     ['3', new DelayBot()],
   ]);
 
-  reply(
-    botId: string,
-    msg: string
-  ): { text: Observable<string>; usr: User | undefined } {
-    const bot = this.bots.get(botId);
-    if (bot === undefined) {
-      return { text: of('error:bot not found'), usr: undefined };
-    }
+  constructor(private store: Store) {}
 
-    return { text: bot.reply(msg), usr: bot.user };
+  reply(botId: string, msg: string): Observable<Message> {
+    const bot = this.bots.get(botId);
+
+    // console.log(`botId : ${botId}`);
+
+    if (bot === undefined) {
+      return of(
+        new Message(uuidv4(), undefined, new Date(), 'error:bot not found')
+      );
+    } else {
+      // mark read if at the moment of bot response, user currently at the same thread
+      return bot.reply(msg).pipe(
+        concatLatestFrom(() => this.store.select(selectCurrentThreadId)),
+        mergeMap(([msg, threadId]) => {
+          msg.isRead = threadId === bot.user.id;
+          return of(msg);
+        })
+      );
+    }
   }
 
   getBots(): User[] {
