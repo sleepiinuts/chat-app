@@ -68,11 +68,14 @@ export class ChatWindowEffects {
     return this.action$.pipe(
       ofType(ChatWindowActions.chat),
       concatLatestFrom(() => this.store.select(selectCurrentThreadId)),
-      mergeMap(([props, botId]) =>
-        this.chatWindowServ.chat(props.message, botId).pipe(
+      mergeMap(([props, threadId]) =>
+        this.chatWindowServ.chat(props.message, threadId).pipe(
           // tap((resp) => console.log(`resp: ${resp.text}`)),
           map((resp) =>
-            ChatWindowActions.response({ response: resp, threadId: botId })
+            ChatWindowActions.response({
+              response: resp,
+              threadId: threadId,
+            })
           ),
           catchError(() => EMPTY) // TODO: error handling?
         )
