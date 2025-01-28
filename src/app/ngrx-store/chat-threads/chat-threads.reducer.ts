@@ -59,6 +59,21 @@ export class ChatThreadsReducer {
 
         // append messages
         return newState;
+      }),
+      on(ChatThreadsActions.markRead, (state, props): State => {
+        // clone state -> newState
+        const newState = cloneDeep(state);
+
+        // mark latest message in current thread as Read
+        if (newState.threads[props.threadId].latestMessage !== undefined) {
+          newState.threads[props.threadId].latestMessage!.isRead = true;
+        }
+
+        // mark all message in current thread as Read
+        const messages = newState.threads[props.threadId].messages;
+        messages?.forEach((_, idx) => (messages[idx].isRead = true));
+
+        return newState;
       })
     );
   }

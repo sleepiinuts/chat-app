@@ -30,4 +30,13 @@ export class ChatThreadsEffects {
       })
     );
   });
+
+  markRead$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ChatThreadsActions.switchThread),
+      switchMap((props) =>
+        of(ChatThreadsActions.markRead({ threadId: props.threadId }))
+      )
+    );
+  });
 }
