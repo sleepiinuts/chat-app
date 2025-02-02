@@ -56,3 +56,18 @@ export const selectLatestMsgFromThread = (threadId: string) =>
     selectChatThreadState,
     (state) => state.threads[threadId].latestMessage
   );
+
+// total unread message
+export const selectTotalUnread = createSelector(
+  selectChatThreadState,
+  (state) => {
+    const threads = state.threads;
+    let total = 0;
+    for (const key in threads) {
+      const thread = threads[key];
+
+      total += thread.messages?.filter((m) => !m.isRead).length || 0;
+    }
+    return total;
+  }
+);
